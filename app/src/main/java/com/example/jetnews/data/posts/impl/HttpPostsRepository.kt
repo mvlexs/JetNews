@@ -16,11 +16,15 @@
 
 package com.example.jetnews.data.posts.impl
 
+import android.content.Context
+import android.net.ConnectivityManager
 import android.util.Log
+import androidx.core.content.ContextCompat.getSystemService
 import com.example.jetnews.data.Result
 import com.example.jetnews.data.posts.PostsRepository
 import com.example.jetnews.model.Post
 import com.example.jetnews.model.PostsFeed
+import com.example.jetnews.ui.home.HomeUiState
 import com.example.jetnews.utils.addOrRemove
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -32,12 +36,18 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
+import java.net.UnknownHostException
+
 
 /**
  * Implementation of PostsRepository that returns a hardcoded list of
  * posts with resources after some delay in a background thread.
  */
+
+
 class HttpPostsRepository : PostsRepository {
+
+
 
     val apiUrl = "https://srv.valo-dev.de/public/jetnews/posts.json "
 
@@ -49,24 +59,30 @@ class HttpPostsRepository : PostsRepository {
     // Used to make suspend functions that read and update state safe to call from any thread
 
     override suspend fun getPost(postId: String?): Result<Post> {
-        return withContext(Dispatchers.IO) {
-            val client = HttpClient {
 
-                install(ContentNegotiation){
-                    json()
+        return withContext(Dispatchers.IO) {
+            try {
+                val client = HttpClient {
+
+                    install(ContentNegotiation){
+                        json()
+                    }
+
                 }
 
-            }
+                val posts: PostsFeed = client.get(apiUrl).body()
+                Log.d("DebugMalik",posts.toString())
 
-            val posts: PostsFeed = client.get(apiUrl).body()
-            Log.d("DebugMalik",posts.toString())
+                val post = posts.allPosts.find { it.id == postId }
 
-            val post = posts.allPosts.find { it.id == postId }
-
-            if (post == null) {
-                Result.Error(IllegalArgumentException("Post not found"))
-            } else {
-                Result.Success(post)
+                if (post == null) {
+                    Result.Error(IllegalArgumentException("Post not found"))
+                } else {
+                    Result.Success(post)
+                }
+            } catch (e: Exception) {
+                Log.d("ErrorMalik",e.toString())
+                Result.Error(e)
             }
         }
     }
@@ -74,19 +90,25 @@ class HttpPostsRepository : PostsRepository {
     override suspend fun getPostsFeed(): Result<PostsFeed> {
         return withContext(Dispatchers.IO) {
 
-            val client = HttpClient {
+            try {
+                val client = HttpClient {
 
-                install(ContentNegotiation){
-                    json()
+                    install(ContentNegotiation){
+                        json()
+                    }
+
                 }
 
+
+                val posts: PostsFeed = client.get(apiUrl).body()
+
+                postsFeed.update { posts }
+                Result.Success(posts)
+            } catch (e: Exception) {
+                Log.d("ErrorMalik",e.toString())
+                Result.Error(e)
             }
 
-
-            val posts: PostsFeed = client.get(apiUrl).body()
-
-            postsFeed.update { posts }
-            Result.Success(posts)
 
         }
     }
@@ -99,9 +121,4 @@ class HttpPostsRepository : PostsRepository {
             it.addOrRemove(postId)
         }
     }
-
-    // used to drive "random" failure in a predictable pattern, making the first request always
-    // succeed
-    private var requestCount = 0
-
 }

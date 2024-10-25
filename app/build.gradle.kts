@@ -145,7 +145,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json.v171)
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.coil.compose.v270)
-    implementation (libs.kotlinx.coroutines.android.v139)
+    implementation(libs.kotlinx.coroutines.android.v139)
 
     androidTestImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.core)
