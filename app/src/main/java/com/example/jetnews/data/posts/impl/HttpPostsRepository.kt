@@ -16,15 +16,11 @@
 
 package com.example.jetnews.data.posts.impl
 
-import android.content.Context
-import android.net.ConnectivityManager
 import android.util.Log
-import androidx.core.content.ContextCompat.getSystemService
 import com.example.jetnews.data.Result
 import com.example.jetnews.data.posts.PostsRepository
 import com.example.jetnews.model.Post
 import com.example.jetnews.model.PostsFeed
-import com.example.jetnews.ui.home.HomeUiState
 import com.example.jetnews.utils.addOrRemove
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -36,7 +32,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
-import java.net.UnknownHostException
 
 
 /**
