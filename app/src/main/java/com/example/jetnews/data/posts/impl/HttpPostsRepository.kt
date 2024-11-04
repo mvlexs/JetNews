@@ -33,17 +33,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 
-
 /**
  * Implementation of PostsRepository that returns a hardcoded list of
  * posts with resources after some delay in a background thread.
  */
-
-
 class HttpPostsRepository : PostsRepository {
-
-
-
     val apiUrl = "https://srv.valo-dev.de/public/jetnews/posts.json "
 
     // for now, store these in memory
@@ -66,7 +60,6 @@ class HttpPostsRepository : PostsRepository {
                 }
 
                 val posts: PostsFeed = client.get(apiUrl).body()
-                Log.d("DebugMalik",posts.toString())
 
                 val post = posts.allPosts.find { it.id == postId }
 
@@ -76,7 +69,6 @@ class HttpPostsRepository : PostsRepository {
                     Result.Success(post)
                 }
             } catch (e: Exception) {
-                Log.d("ErrorMalik",e.toString())
                 Result.Error(e)
             }
         }
@@ -94,7 +86,6 @@ class HttpPostsRepository : PostsRepository {
 
                 }
 
-
                 val posts: PostsFeed = client.get(apiUrl).body()
 
                 postsFeed.update { posts }
@@ -104,13 +95,11 @@ class HttpPostsRepository : PostsRepository {
                 Result.Error(e)
             }
 
-
         }
     }
 
     override fun observeFavorites(): Flow<Set<String>> = favorites
     override fun observePostsFeed(): Flow<PostsFeed?> = postsFeed
-
     override suspend fun toggleFavorite(postId: String) {
         favorites.update {
             it.addOrRemove(postId)

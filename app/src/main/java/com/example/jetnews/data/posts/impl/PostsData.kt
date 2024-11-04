@@ -415,7 +415,7 @@ val paragraphsPost2 = listOf(
         class MyVMFactory @Inject constructor(
           private val vmMap: Map<String, @JvmSuppressWildcards Provider<ViewModel>>
         ) { 
-        ... 
+        ...
         }
         """.trimIndent(),
         listOf(Markup(MarkupType.Bold, 72, 93))
